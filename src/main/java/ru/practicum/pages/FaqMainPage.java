@@ -10,6 +10,11 @@ import java.time.Duration;
 import java.util.List;
 
 public class FaqMainPage {
+    private static final By COOKIE_CONSENT_LOCATOR = By.className("App_CookieConsent__1yUIN");
+    private static final By CLOSE_COOKIE_BUTTON_LOCATOR = By.className("App_CookieButton__3cvqF");
+    private static final By FAQ_QUESTIONS_LOCATOR = By.cssSelector(".accordion__button");
+    private static final By FAQ_RESPONSES_LOCATOR = By.className("accordion__panel");
+
     private final WebDriver driver;
 
     public FaqMainPage(WebDriver driver) {
@@ -18,9 +23,9 @@ public class FaqMainPage {
 
     public void closeCookieConsent() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.className("App_CookieConsent__1yUIN")));
-        WebElement button = driver.findElement(By.className("App_CookieButton__3cvqF"));
-        button.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(COOKIE_CONSENT_LOCATOR));
+        WebElement cookieButton = driver.findElement(CLOSE_COOKIE_BUTTON_LOCATOR);
+        cookieButton.click();
     }
     public void openMainPage() {
         driver.get("https://qa-scooter.praktikum-services.ru/");
@@ -28,16 +33,16 @@ public class FaqMainPage {
 
     public boolean findAnswer(String expectedText) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".accordion__button")));
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(FAQ_QUESTIONS_LOCATOR));
 
-        List<WebElement> elements = driver.findElements(By.cssSelector(".accordion__button"));
-        for (WebElement element : elements) {
-            if (element.isDisplayed()) {
-                element.click();
+        List<WebElement> questions = driver.findElements(FAQ_QUESTIONS_LOCATOR);
+        for (WebElement question : questions) {
+            if (question.isDisplayed()) {
+                question.click();
 
-                List<WebElement> responseTexts = driver.findElements(By.className("accordion__panel"));
-                for (WebElement responseText : responseTexts) {
-                    String actualResponse = responseText.getText();
+                List<WebElement> responses = driver.findElements(FAQ_RESPONSES_LOCATOR);
+                for (WebElement response : responses) {
+                    String actualResponse = response.getText();
                     if (actualResponse.contains(expectedText)) {
                         return true;
                     }
@@ -46,7 +51,7 @@ public class FaqMainPage {
         }
         return false;
     }
-    public void ComparisonOfExpectedAndActualResults(String expectedText) {
+    public void comparisonOfExpectedAndActualResults(String expectedText) {
         boolean actualResult = findAnswer(expectedText);
         Assert.assertTrue(
                 "Результат не верен! Ожидается: " + expectedText,

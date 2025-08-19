@@ -1,10 +1,7 @@
 package ru.practicum.pages;
 
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -13,6 +10,30 @@ import java.util.List;
 import java.util.Random;
 
 public class ScooterMainPage {
+    private static final By COOKIE_CONSENT_BUTTON_LOCATOR = By.className("App_CookieButton__3cvqF");
+    private static final By MAIN_ORDER_BUTTON_LOCATOR = By.className("Button_Button__ra12g");
+    private static final By ALTERNATIVE_ORDER_BUTTON_LOCATOR = By.cssSelector(".Button_Button__ra12g.Button_Middle__1CSJM");
+
+    private static final By NAME_INPUT_FIELD_LOCATOR = By.cssSelector("input[placeholder='* Имя']");
+    private static final By SURNAME_INPUT_FIELD_LOCATOR = By.cssSelector("input[placeholder='* Фамилия']");
+    private static final By ADDRESS_INPUT_FIELD_LOCATOR = By.cssSelector("input[placeholder='* Адрес: куда привезти заказ']");
+    private static final By METRO_STATION_SELECTOR_LOCATOR = By.className("select-search__input");
+    private static final By METRO_STATION_OPTION_LOCATOR = By.className("select-search__select");
+    private static final By PHONE_INPUT_FIELD_LOCATOR = By.cssSelector("input[placeholder='* Телефон: на него позвонит курьер']");
+
+    private static final By NEXT_BUTTON_LOCATOR = By.cssSelector(".Button_Button__ra12g.Button_Middle__1CSJM");
+
+    private static final By DATE_PICKER_LOCATOR = By.className("react-datepicker__input-container");
+    private static final By DROPDOWN_CONTROL_LOCATOR = By.className("Dropdown-control");
+    private static final By DROPDOWN_OPTIONS_LOCATOR = By.className("Dropdown-option");
+    private static final By BLACK_SCOOTER_COLOR_LOCATOR = By.xpath("//label[@for='black']");
+    private static final By GREY_SCOOTER_COLOR_LOCATOR = By.xpath("//label[@for='grey']");
+    private static final By COMMENT_INPUT_FIELD_LOCATOR = By.cssSelector(".Input_Input__1iN_Z.Input_Responsible__1jDKN[placeholder='Комментарий для курьера']");
+
+    private static final By ORDER_CONFIRMATION_BUTTON_LOCATOR = By.xpath("//button[@class='Button_Button__ra12g Button_Middle__1CSJM' and contains(text(), 'Да')]");
+    private static final By SCOOTER_ORDER_BUTTON_LOCATOR = By.cssSelector(".Button_Button__ra12g.Button_Middle__1CSJM:not(.Button_Inverted__3IF-i)");
+    private static final By MODAL_WINDOW_LOCATOR = By.cssSelector(".Order_Modal__YZ-d3");
+
     private final WebDriver driver;
 
     public ScooterMainPage(WebDriver driver) {
@@ -21,84 +42,86 @@ public class ScooterMainPage {
 
     public void closeCookieConsent() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.className("App_CookieConsent__1yUIN")));
-        WebElement button = driver.findElement(By.className("App_CookieButton__3cvqF"));
+        wait.until(ExpectedConditions.presenceOfElementLocated(COOKIE_CONSENT_BUTTON_LOCATOR));
+        WebElement button = driver.findElement(COOKIE_CONSENT_BUTTON_LOCATOR);
         button.click();
     }
+
     public void openMainPage() {
         driver.get("https://qa-scooter.praktikum-services.ru/");
     }
 
-    public void SelectingAndClickingOnTheOrderButton(int testNumber) {
-        By buttonLocator = testNumber == 0 ? By.className("Button_Button__ra12g") : By.cssSelector(".Button_Button__ra12g.Button_Middle__1CSJM");
-        if (buttonLocator.equals(By.className("Button_Button__ra12g"))) {
+    public void selectingAndClickingOnTheOrderButton(int testNumber) {
+        By buttonLocator = testNumber == 0 ? MAIN_ORDER_BUTTON_LOCATOR : ALTERNATIVE_ORDER_BUTTON_LOCATOR;
+
+        if (buttonLocator.equals(MAIN_ORDER_BUTTON_LOCATOR)) {
             System.out.println("Нажата основная кнопка Заказать.");
-        } else if (buttonLocator.equals(By.cssSelector(".Button_Button__ra12g.Button_Middle__1CSJM"))) {
+        } else if (buttonLocator.equals(ALTERNATIVE_ORDER_BUTTON_LOCATOR)) {
             System.out.println("Нажата альтернативная кнопка Заказать.");
         }
         driver.findElement(buttonLocator).click();
     }
 
-    public  void fillOrderForm( PersonData data) {
-        driver.findElement(By.cssSelector("input[placeholder='* Имя']")).sendKeys(data.getName());
-        driver.findElement(By.cssSelector("input[placeholder='* Фамилия']")).sendKeys(data.getSurname());
-        driver.findElement(By.cssSelector("input[placeholder='* Адрес: куда привезти заказ']")).sendKeys(data.getAddress());
-        driver.findElement(By.cssSelector(".select-search__input")).sendKeys(data.getMetroStation());
-        driver.findElement(By.className("select-search__select")).click();
-        driver.findElement(By.cssSelector("input[placeholder='* Телефон: на него позвонит курьер']")).sendKeys(data.getPhone());
+    public void fillOrderForm(PersonData data) {
+        driver.findElement(NAME_INPUT_FIELD_LOCATOR).sendKeys(data.getName());
+        driver.findElement(SURNAME_INPUT_FIELD_LOCATOR).sendKeys(data.getSurname());
+        driver.findElement(ADDRESS_INPUT_FIELD_LOCATOR).sendKeys(data.getAddress());
+        driver.findElement(METRO_STATION_SELECTOR_LOCATOR).sendKeys(data.getMetroStation());
+        driver.findElement(METRO_STATION_OPTION_LOCATOR).click();
+        driver.findElement(PHONE_INPUT_FIELD_LOCATOR).sendKeys(data.getPhone());
     }
 
     public void clickNextButton() {
-        driver.findElement(By.cssSelector(".Button_Button__ra12g.Button_Middle__1CSJM")).click();
+        driver.findElement(NEXT_BUTTON_LOCATOR).click();
     }
 
     public void fillSecondPartOfForm(OrderData order) {
         Actions actions = new Actions(driver);
 
-        driver.findElement(By.className("react-datepicker__input-container")).click();
-        WebElement dateInputContainer = driver.findElement(By.className("react-datepicker__input-container"));
+        driver.findElement(DATE_PICKER_LOCATOR).click();
+        WebElement dateInputContainer = driver.findElement(DATE_PICKER_LOCATOR);
         dateInputContainer.click();
 
         WebElement inputField = dateInputContainer.findElement(By.tagName("input"));
         inputField.sendKeys(order.getDeliveryDate());
         actions.sendKeys(Keys.ESCAPE).perform();
 
-        driver.findElement(By.className("Dropdown-control")).click();
-        List<WebElement> elements = driver.findElements(By.className("Dropdown-option"));
+        driver.findElement(DROPDOWN_CONTROL_LOCATOR).click();
+        List<WebElement> elements = driver.findElements(DROPDOWN_OPTIONS_LOCATOR);
         Random random = new Random();
         int randomIndex = random.nextInt(elements.size());
         WebElement randomElement = elements.get(randomIndex);
         randomElement.click();
+
         WebElement colorOption = null;
         switch (order.getScooterColour()) {
             case "чёрный жемчуг":
-                colorOption = driver.findElement(By.xpath("//label[@for='black']"));
+                colorOption = driver.findElement(BLACK_SCOOTER_COLOR_LOCATOR);
                 break;
             case "серая безысходность":
-                colorOption = driver.findElement(By.xpath("//label[@for='grey']"));
+                colorOption = driver.findElement(GREY_SCOOTER_COLOR_LOCATOR);
                 break;
             default:
                 throw new IllegalArgumentException("Неподдерживаемый цвет: " + order.getScooterColour());
         }
         colorOption.click();
 
-        driver.findElement(By.cssSelector(".Input_Input__1iN_Z.Input_Responsible__1jDKN[placeholder='Комментарий для курьера']")).sendKeys(order.getComment());
+        driver.findElement(COMMENT_INPUT_FIELD_LOCATOR).sendKeys(order.getComment());
     }
 
-    public  void clickOrderConfirmation() {
-        WebElement element = driver.findElement(By.xpath("//button[@class='Button_Button__ra12g Button_Middle__1CSJM' and contains(text(), 'Да')]"));
+    public void clickOrderConfirmation() {
+        WebElement element = driver.findElement(ORDER_CONFIRMATION_BUTTON_LOCATOR);
         element.click();
     }
 
     public void clicksOrderScooter() {
-        driver.findElement(By.cssSelector(".Button_Button__ra12g.Button_Middle__1CSJM:not(.Button_Inverted__3IF-i)")).click();
+        driver.findElement(SCOOTER_ORDER_BUTTON_LOCATOR).click();
     }
 
-    public   void checkError() {
-        WebElement modalWindow = driver.findElement(By.cssSelector(".Order_Modal__YZ-d3"));
+    public void checkError() {
+        WebElement modalWindow = driver.findElement(MODAL_WINDOW_LOCATOR);
         String fullModalText = modalWindow.getText().trim();
         String expectedTitle = "Заказ оформлен";
         Assert.assertTrue("Ожидался заголовок '" + expectedTitle + "', но не найден.", fullModalText.contains(expectedTitle));
     }
 }
-

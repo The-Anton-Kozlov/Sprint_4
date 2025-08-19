@@ -15,9 +15,7 @@ public class FaqWebTest {
     private boolean expectedResult;
 
 
-    @Parameterized.Parameters
-    // public static Object[][] getTestData() {
-    //  return FaqData.FAQ_DATA;
+    @Parameterized.Parameters(name = "Тестовые данные: {index}: '{0}' => {1}")
     public static Object[][] getTestData() {
         return new Object[][]{
                 {"Сутки — 400 рублей. Оплата курьеру — наличными или картой.", true},
@@ -30,7 +28,6 @@ public class FaqWebTest {
                 {"Да, обязательно. Всем самокатов! И Москве, и Московской области.", true}
         };
     }
-
     public FaqWebTest(String expectedText, boolean expectedResult) {
         this.expectedText = expectedText;
         this.expectedResult = expectedResult;
@@ -42,7 +39,7 @@ public class FaqWebTest {
 
         mainPage.openMainPage();
         mainPage.closeCookieConsent();
-        mainPage.ComparisonOfExpectedAndActualResults(expectedText);
+        mainPage.comparisonOfExpectedAndActualResults(expectedText);
     }
 }
 
