@@ -1,18 +1,15 @@
 package ru.practicum.pages;
 
 import org.junit.Assert;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 
 public class ScooterMainPage {
-    private static final By COOKIE_CONSENT_BUTTON_LOCATOR = By.className("App_CookieButton__3cvqF");
-    private static final By MAIN_ORDER_BUTTON_LOCATOR = By.className("Button_Button__ra12g");
-    private static final By ALTERNATIVE_ORDER_BUTTON_LOCATOR = By.cssSelector(".Button_Button__ra12g.Button_Middle__1CSJM");
 
     private static final By NAME_INPUT_FIELD_LOCATOR = By.cssSelector("input[placeholder='* Имя']");
     private static final By SURNAME_INPUT_FIELD_LOCATOR = By.cssSelector("input[placeholder='* Фамилия']");
@@ -30,8 +27,8 @@ public class ScooterMainPage {
     private static final By GREY_SCOOTER_COLOR_LOCATOR = By.xpath("//label[@for='grey']");
     private static final By COMMENT_INPUT_FIELD_LOCATOR = By.cssSelector(".Input_Input__1iN_Z.Input_Responsible__1jDKN[placeholder='Комментарий для курьера']");
 
-    private static final By ORDER_CONFIRMATION_BUTTON_LOCATOR = By.xpath("//button[@class='Button_Button__ra12g Button_Middle__1CSJM' and contains(text(), 'Да')]");
     private static final By SCOOTER_ORDER_BUTTON_LOCATOR = By.cssSelector(".Button_Button__ra12g.Button_Middle__1CSJM:not(.Button_Inverted__3IF-i)");
+    private static final By ORDER_CONFIRMATION_BUTTON_LOCATOR = By.xpath("//button[@class='Button_Button__ra12g Button_Middle__1CSJM' and contains(text(), 'Да')]");
     private static final By MODAL_WINDOW_LOCATOR = By.cssSelector(".Order_Modal__YZ-d3");
 
     private final WebDriver driver;
@@ -40,29 +37,8 @@ public class ScooterMainPage {
         this.driver = driver;
     }
 
-    public void closeCookieConsent() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-        wait.until(ExpectedConditions.presenceOfElementLocated(COOKIE_CONSENT_BUTTON_LOCATOR));
-        WebElement button = driver.findElement(COOKIE_CONSENT_BUTTON_LOCATOR);
-        button.click();
-    }
-
-    public void openMainPage() {
-        driver.get("https://qa-scooter.praktikum-services.ru/");
-    }
-
-    public void selectingAndClickingOnTheOrderButton(int testNumber) {
-        By buttonLocator = testNumber == 0 ? MAIN_ORDER_BUTTON_LOCATOR : ALTERNATIVE_ORDER_BUTTON_LOCATOR;
-
-        if (buttonLocator.equals(MAIN_ORDER_BUTTON_LOCATOR)) {
-            System.out.println("Нажата основная кнопка Заказать.");
-        } else if (buttonLocator.equals(ALTERNATIVE_ORDER_BUTTON_LOCATOR)) {
-            System.out.println("Нажата альтернативная кнопка Заказать.");
-        }
-        driver.findElement(buttonLocator).click();
-    }
-
     public void fillOrderForm(PersonData data) {
+
         driver.findElement(NAME_INPUT_FIELD_LOCATOR).sendKeys(data.getName());
         driver.findElement(SURNAME_INPUT_FIELD_LOCATOR).sendKeys(data.getSurname());
         driver.findElement(ADDRESS_INPUT_FIELD_LOCATOR).sendKeys(data.getAddress());
@@ -110,18 +86,19 @@ public class ScooterMainPage {
     }
 
     public void clickOrderConfirmation() {
+        driver.findElement(SCOOTER_ORDER_BUTTON_LOCATOR).click();
+    }
+
+    public void clicksOrderScooter() {
         WebElement element = driver.findElement(ORDER_CONFIRMATION_BUTTON_LOCATOR);
         element.click();
     }
 
-    public void clicksOrderScooter() {
-        driver.findElement(SCOOTER_ORDER_BUTTON_LOCATOR).click();
-    }
 
     public void checkError() {
         WebElement modalWindow = driver.findElement(MODAL_WINDOW_LOCATOR);
         String fullModalText = modalWindow.getText().trim();
         String expectedTitle = "Заказ оформлен";
-        Assert.assertTrue("Ожидался заголовок '" + expectedTitle + "', но не найден.", fullModalText.contains(expectedTitle));
+        Assert.assertTrue("Ошибка: ожидалось наличие текста '" + expectedTitle + "'", fullModalText.contains(expectedTitle));
     }
 }

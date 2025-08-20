@@ -5,9 +5,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
+import ru.practicum.pages.HomePage;
 import ru.practicum.pages.OrderData;
 import ru.practicum.pages.PersonData;
 import ru.practicum.pages.ScooterMainPage;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -42,15 +44,16 @@ public class ScooterRentalOrderTest {
     public void testFillingOrderForm() {
         WebDriver driver = factory.getDriver();
         var mainPage = new ScooterMainPage(driver);
+        var homePage = new HomePage(driver);
 
-        mainPage.openMainPage();
-        mainPage.closeCookieConsent();
-        mainPage.selectingAndClickingOnTheOrderButton(testNumber);
+        homePage.openMainPage();
+        homePage.closeCookieConsent();
+        homePage.selectAndClickOrderButton(testNumber);
         mainPage.fillOrderForm(data);
         mainPage.clickNextButton();
         mainPage.fillSecondPartOfForm(orderData);
-        mainPage.clicksOrderScooter();
         mainPage.clickOrderConfirmation();
+        mainPage.clicksOrderScooter();
         mainPage.checkError();
     }
 }
